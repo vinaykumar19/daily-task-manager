@@ -1,0 +1,16 @@
+.bg{
+    background-color: rgb(255, 187, 1);
+}
+
+#v1{
+    border-right: 1px solid rgba(0, 89, 255, 0.733);
+    height: 80vmin;
+}
+
+.v2{
+    color: rgba(0, 89, 255, 0.733);
+    text-align: center;
+}
+
+
+

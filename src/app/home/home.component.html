@@ -1,0 +1,132 @@
+<div class="container-fluid">
+    <nav class="navbar navbar-light bg">
+        <a class="navbar-brand">Daily Task Manager</a>
+        <form class="form-inline">
+            <!-- Button trigger modal -->
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#dataModal">
+                ADD New Task
+            </button>
+        </form>
+    </nav><br>
+    <div class="row" *ngIf="completedPercentage!='NaN'&& completedPercentage!= null && completedPercentage!= undefined">
+        <div class="col align-self-center" style="text-align: end;">
+            <h5 [ngClass]="{'text-success':(green!=undefined && green!=''),
+        'text-primary':(amber!=undefined && amber!=''),
+    'text-danger':(red!=undefined && red!='')}">
+                {{completedPercentage}}% </h5>
+        </div>
+
+
+    </div><br>
+    <div class="row">
+        <div class="col-sm-4" id="v1" cdkDropList #moviesList="cdkDropList" [cdkDropListData]="sortedPendingTasks"
+            [cdkDropListConnectedTo]="[inProcessList]" (cdkDropListDropped)="onDrop($event)">
+            <h5 class="v2">Pending</h5><br>
+            <div *ngIf="sortedPendingTasks.length>0">
+                <div cdkDrag *ngFor=" let tasks of sortedPendingTasks">
+                    <p style="width: 90%;
+                height: 40px;
+                background-color: tomato;" *ngIf="tasks.priority=='High'"><img style="width: 25px;"
+                            src="assets/images/up-arrow.png"> {{tasks.title}} <img style="width: 20px; float: right;"
+                            src="assets/images/recycle-bin.png" (click)="deleteData(tasks)"> <img
+                            style="width: 20px; float: right;" src="assets/images/pencil.png" data-toggle="modal"
+                            data-target="#dataModal" (click)="editData(tasks)"></p>
+                    <p style="width: 90%;
+                height: 40px;
+                background-color: tomato;" *ngIf="tasks.priority=='Low'"><img style="width: 25px;"
+                            src="assets/images/down-arrow.png"> {{tasks.title}} <img style="width: 20px; float: right;"
+                            src="assets/images/recycle-bin.png" (click)="deleteData(tasks)"> <img
+                            style="width: 20px; float: right;" src="assets/images/pencil.png" data-toggle="modal"
+                            data-target="#dataModal" (click)="editData(tasks)"></p>
+                    <p style="width: 90%;
+                height: 40px;
+                background-color: tomato;" *ngIf="tasks.priority=='Normal'"><img style="width: 25px;"
+                            src="assets/images/right.png"> {{tasks.title}} <img style="width: 20px; float: right;"
+                            src="assets/images/recycle-bin.png" (click)="deleteData(tasks)"> <img
+                            style="width: 20px; float: right;" src="assets/images/pencil.png" data-toggle="modal"
+                            data-target="#dataModal" (click)="editData(tasks)"></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4" id="v1" cdkDropList #inProcessList="cdkDropList" [cdkDropListData]="inProcessTasks"
+            [cdkDropListConnectedTo]="[ completedList]" (cdkDropListDropped)="onDrop($event)">
+            <h5 class="v2">In process</h5><br>
+            <div cdkDrag *ngFor="let tasks of inProcessTasks">
+                <p style="width: 90%;
+            height: 40px;
+            background-color: rgb(224, 224, 75);" *ngIf="tasks.priority=='High'"><img style="width: 25px;"
+                        src="assets/images/up-arrow.png"> {{tasks.title}}<img style="width: 20px; float: right;"
+                        src="assets/images/recycle-bin.png" (click)="deleteData(tasks)"></p>
+                <p style="width: 90%;
+            height: 40px;
+            background-color: rgb(224, 224, 75);" *ngIf="tasks.priority=='Low'"><img style="width: 25px;"
+                        src="assets/images/down-arrow.png"> {{tasks.title}}<img style="width: 20px; float: right;"
+                        src="assets/images/recycle-bin.png" (click)="deleteData(tasks)"></p>
+                <p style="width: 90%;
+            height: 40px;
+            background-color: rgb(224, 224, 75);" *ngIf="tasks.priority=='Normal'"><img style="width: 25px;"
+                        src="assets/images/right.png"> {{tasks.title}}<img style="width: 20px; float: right;"
+                        src="assets/images/recycle-bin.png" (click)="deleteData(tasks)"></p>
+
+            </div>
+        </div>
+        <div class="col-sm-4" cdkDropList #completedList="cdkDropList" [cdkDropListData]="completedTasks"
+            [cdkDropListConnectedTo]="" (cdkDropListDropped)="onDrop($event)">
+            <h5 class="v2">Completed</h5><br>
+            <div cdkDrag *ngFor="let tasks of completedTasks">
+                <p style="width: 90%;height: 40px;background-color: rgb(84, 167, 84);"><img style="width: 25px;"
+                        src="assets/images/check.png">{{tasks.title}}</p>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="dataModal" data-backdrop="static" tabindex="-1" role="dialog"
+        aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalCenterTitle">ADD/Edit Text</h5>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <form #createTaskForm="ngForm">
+                                    <input type="text" name="taskTitle" [(ngModel)]="taskTitle" #title="ngModel"
+                                        class="form-control" placeholder="Task Title..." required><br>
+                                    <input type="text" name="description" [(ngModel)]="description" #title="ngModel"
+                                        class="form-control" placeholder="Task Description..." required><br>
+                                    <select [(ngModel)]="priority" #category="ngModel" name="priority"
+                                        class="form-control" id="priority" required>
+                                        <option hidden [value]="select" selected>--select priority-- </option>
+                                        <option *ngFor="let priority of possibleProrities" [value]="priority">
+                                            {{priority}}</option>
+                                    </select>
+                                </form>
+
+                            </div>
+                            <div class="col-sm-6">
+                                <dl-date-time-picker startView="day" maxView="year" minView="minute" minuteStep="5"
+                                    [(ngModel)]="selectedDate" #dateTimePicker>
+                                </dl-date-time-picker>
+
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" (click)="submit()"
+                        [disabled]="!createTaskForm.form.valid || (dateTimePicker.value==undefined)"
+                        data-dismiss="modal">Save</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal"
+                        (click)="onCloseModal()">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
